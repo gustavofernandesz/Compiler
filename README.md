@@ -7,6 +7,6 @@ Esse projeto faz as seguintes funcionalidades léxicas:
 * Validação e classificação de tokens de acordo com suas regras, como identificadores, números inteiros, operadores aritméticos, palavras reservadas e delimitadores.
 * Registro de tokens.
 
-#FERRAMENTAS UTILIZADAS
+# FERRAMENTAS UTILIZADAS
 
-*Linguagem Python e biblioteca PLY. para análise lexica. 
+* Linguagem Python e biblioteca PLY. para análise lexica. 
