@@ -77,7 +77,18 @@ reserved = {
 }
 
 tokens=[
-
+    'ID',             
+    'STRING',         
+    'NUMBER',         
+    'LPAREN', 'RPAREN',
+    'LBRACE', 'RBRACE',
+    'COMMA',
+    'MAIORIGUAL', 'MENORIGUAL',
+    'MAIOR', 'MENOR',
+    'CONTEM', 'CONTIDO',
+    'ASTERISCO',
+    'ARROBA',
+    'COLON'
 ]+ list(set(reserved.values()))
 
 
@@ -95,6 +106,53 @@ t_CONTEM = r'<>--'
 t_CONTIDO = r'--<>'
 t_ASTERISCO = r'\*'
 t_ARROBA = r'@'
+t_COLON = r':'
 
+def t_COMMENT_SINGLELINE(t):
+    r'//[^\n]*'
+    pass
+
+def t_COMMENT_MULTILINE(t):
+    r'/\*([^*]|\*+[^*/])*\*+/'
+    t.lexer.lineno += t.value.count('\n')
+    pass
+
+def t_STRING(t):
+    r'(\"([^\\\"]|\\.)*\"|\'([^\\\']|\\.)*\')'
+    t.value = t.value[1:-1]
+    return t
+
+def t_NUMBER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value.lower(), 'ID') 
+    return t
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += t.value.count("\n")
+
+def t_error(t):
+    print(f"[LEX ERROR] Linha {t.lexer.lineno}: símbolo inesperado {repr(t.value[0])}")
+    t.lexer.skip(1)
+
+def build(**kwargs):
+    return lex.lex(**kwargs)
+
+def lex_table(input_text, lexer=None):
+    if lexer is None:
+        lexer = build()
+    lexer.input(input_text)
+    table = []
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        table.append((tok.lineno, tok.type, tok.value))
+    return table
 
 saida = [] # tabela de simbolos
