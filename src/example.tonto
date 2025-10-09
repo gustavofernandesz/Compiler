@@ -1,0 +1,45 @@
+package example;
+
+kind Person{
+
+	name: String
+	age: Integer
+	gender: Gender
+	}
+
+phase Child specializes Person
+
+enum Gender{
+	MALE
+	FEMALE
+	OTHER
+}
+
+relation Person[0..*] -- hasFriend -- [0..*] Person
+
+datatype Adress {
+	street: String
+	number: int
+	}
+
+kind Person{
+	name: String
+	birthDate: date {const}
+}
+
+phase Child specializes Person
+
+disjoint complete genset PersonAgeGroup where Child, Adult specializes Person
+
+genset PersonAgeGroup{
+	general Person
+	specifics Child, Adult
+}
+
+//internal relation
+
+kind University{
+	@componentOf [1] <>-- [1..*] Department
+}
+
+@mediation relation EmploymentContract [1..*] -- [1] Employee
