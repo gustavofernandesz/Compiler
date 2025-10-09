@@ -18,6 +18,13 @@ reserved = {
     'sameAs': 'SAMEAS',
     'differentFrom': 'DIFFERENTFROM',
     'import': 'IMPORT',
+    'genset': 'GENSET',
+    'disjoint': 'DISJOINT',
+    'complete': 'COMPLETE',
+    'general': 'GENERAL',
+    'specifics': 'SPECIFICS',
+    'where': 'WHERE',
+    'package': 'PACKAGE',
 
     # Estereótipos de classe 
     'kind': 'KIND',
