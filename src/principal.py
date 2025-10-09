@@ -2,6 +2,21 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 #palavras reservadas do dicionário TONTO
+class_stereotypes = {
+    'event', 'situation', 'process', 'category', 'mixin',
+    'phaseMixin', 'roleMixin', 'historicalRoleMixin','kind','collective',
+    'quantity', 'quality', 'mode', 'intrisicMode', 'extrinsicMode',
+    'subkind', 'phase', 'role', 'historicalRole',
+}
+
+stereotype_relation = {
+    'material', 'derivation', 'comparative', 'mediation', 'characterization',
+    'externalDependence', 'componentOf', 'memberOf', 'subCollectionOf', 'subQualityOf',
+    'instantiation', 'termination', 'participational', 'participation', 'historicalDependence',
+    'creation', 'manifestation', 'bringsAbout', 'triggers', 'composition',
+    'aggregation', 'inherence', 'value', 'formal', 'constitution',
+}
+
 reservadas={
     'ontology',
     'class',
