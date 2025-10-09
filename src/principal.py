@@ -2,52 +2,83 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 #palavras reservadas do dicionário TONTO
-class_stereotypes = {
-    'event', 'situation', 'process', 'category', 'mixin',
-    'phaseMixin', 'roleMixin', 'historicalRoleMixin','kind','collective',
-    'quantity', 'quality', 'mode', 'intrisicMode', 'extrinsicMode',
-    'subkind', 'phase', 'role', 'historicalRole',
-}
+reserved = {
+    # Palavras reservadas principais 
+    'ontology': 'ONTOLOGY',
+    'class': 'CLASS',
+    'subclassOf': 'SUBCLASSOF',
+    'individual': 'INDIVIDUAL',
+    'property': 'PROPERTY',
+    'domain': 'DOMAIN',
+    'range': 'RANGE',
+    'datatype': 'DATATYPE',
+    'annotation': 'ANNOTATION',
+    'equivalentTo': 'EQUIVALENTTO',
+    'disjointWith': 'DISJOINTWITH',
+    'sameAs': 'SAMEAS',
+    'differentFrom': 'DIFFERENTFROM',
+    'import': 'IMPORT',
 
-stereotype_relation = {
-    'material', 'derivation', 'comparative', 'mediation', 'characterization',
-    'externalDependence', 'componentOf', 'memberOf', 'subCollectionOf', 'subQualityOf',
-    'instantiation', 'termination', 'participational', 'participation', 'historicalDependence',
-    'creation', 'manifestation', 'bringsAbout', 'triggers', 'composition',
-    'aggregation', 'inherence', 'value', 'formal', 'constitution',
-}
+    # Estereótipos de classe 
+    'kind': 'KIND',
+    'subkind': 'SUBKIND',
+    'collective': 'COLLECTIVE',
+    'quantity': 'QUANTITY',
+    'quality': 'QUALITY',
+    'mode': 'MODE',
+    'intrisicMode': 'INTRISICMODE',
+    'extrinsicMode': 'EXTRINSICMODE',
+    'role': 'ROLE',
+    'phase': 'PHASE',
+    'historicalRole': 'HISTORICALROLE',
+    'event': 'EVENT',
+    'situation': 'SITUATION',
+    'process': 'PROCESS',
+    'category': 'CATEGORY',
+    'mixin': 'MIXIN',
+    'phaseMixin': 'PHASEMIXIN',
+    'roleMixin': 'ROLEMIXIN',
+    'historicalRoleMixin': 'HISTORICALROLEMIXIN',
 
-reservadas={
-    'ontology',
-    'class',
-    'subclassOf',
-    'individual',
-    'property',
-    'domain',
-    'range',
-    'datatype',
-    'annotation',
-    'equivalentTo',
-    'disjointWith',
-    'sameAs',
-    'differentFrom',
-    'import'
-    'kind'
-    'role'
-    'phase'
+    # Estereótipos de relação
+    'material': 'MATERIAL',
+    'derivation': 'DERIVATION',
+    'comparative': 'COMPARATIVE',
+    'mediation': 'MEDIATION',
+    'characterization': 'CHARACTERIZATION',
+    'externalDependence': 'EXTERNALDEPENDENCE',
+    'componentOf': 'COMPONENTOF',
+    'memberOf': 'MEMBEROF',
+    'subCollectionOf': 'SUBCOLLECTIONOF',
+    'subQualityOf': 'SUBQUALITYOF',
+    'instantiation': 'INSTANTIATION',
+    'termination': 'TERMINATION',
+    'participational': 'PARTICIPATIONAL',
+    'participation': 'PARTICIPATION',
+    'historicalDependence': 'HISTORICALDEPENDENCE',
+    'creation': 'CREATION',
+    'manifestation': 'MANIFESTATION',
+    'bringsAbout': 'BRINGSABOUT',
+    'triggers': 'TRIGGERS',
+    'composition': 'COMPOSITION',
+    'aggregation': 'AGGREGATION',
+    'inherence': 'INHERENCE',
+    'value': 'VALUE',
+    'formal': 'FORMAL',
+    'constitution': 'CONSTITUTION',
+    
+    # Tipos de dados 
+    'number': 'TYPE_NUMBER',
+    'string': 'TYPE_STRING',
+    'boolean': 'TYPE_BOOLEAN',
+    'date': 'TYPE_DATE',
+    'time': 'TYPE_TIME',
+    'datetime': 'TYPE_DATETIME',
 }
-type_data=[
-    'number',
-    'string',
-    'boolean',
-    'date',
-    'time',
-    'datetime'
-]
 
 tokens=[
 
-]+ list(set(reservadas.values()))
+]+ list(set(reserved.values()))
 
 
 t_LPAREN = r'\('      # abre parêntese
