@@ -104,7 +104,7 @@ t_RPAREN = r'\)'      # fecha parêntese
 t_LBRACE = r'\{'      # abre chave
 t_RBRACE = r'\}'      # fecha chave
 t_COMMA = r'\,'       # vírgula
-t_ignore = ' \n\t'      # ignora espaços e tabulações
+t_ignore = ' \t'      # ignora tabulações
 t_MAIORIGUAL = r'>='  # operador >=
 t_MENORIGUAL = r'<='  # operador <=
 t_MAIOR = r'>'        # operador >
