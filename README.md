@@ -9,4 +9,5 @@ Esse projeto faz as seguintes funcionalidades léxicas:
 
 # FERRAMENTAS UTILIZADAS
 
-* Linguagem Python e biblioteca PLY. para análise lexica. 
+* Linguagem Python e biblioteca PLY. para análise lexica.
+* Ambiente de trabalho: PyCharm 2025.2.2 nos sistemas operacionais Windows e Linux (Debian)
