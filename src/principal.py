@@ -1,6 +1,7 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import re
+from collections import Counter
 
 # Palavras reservadas estruturais 
 reserved = {
@@ -194,12 +195,15 @@ def lex_table(input_text, lexer=None):
     if lexer is None:
         lexer = build()
     lexer.input(input_text)
+
     table = []
+    counts = Counter()
     while True:
         tok = lexer.token()
         if not tok:
             break
         table.append((tok.lineno, tok.type, tok.value))
-    return table
+        counts[tok.type] += 1
+    return table, counts
 
 saida = [] # tabela de simbolos
