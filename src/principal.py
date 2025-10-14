@@ -6,17 +6,17 @@ reserved = {
     # Palavras reservadas principais 
     'ontology': 'ONTOLOGY',
     'class': 'CLASS',
-    'subclassOf': 'SUBCLASSOF',
+    'subclassof': 'SUBCLASSOF',
     'individual': 'INDIVIDUAL',
     'property': 'PROPERTY',
     'domain': 'DOMAIN',
     'range': 'RANGE',
     'datatype': 'DATATYPE',
     'annotation': 'ANNOTATION',
-    'equivalentTo': 'EQUIVALENTTO',
+    'equivalentto': 'EQUIVALENTTO',
     'disjointWith': 'DISJOINTWITH',
-    'sameAs': 'SAMEAS',
-    'differentFrom': 'DIFFERENTFROM',
+    'sameas': 'SAMEAS',
+    'differentfrom': 'DIFFERENTFROM',
     'import': 'IMPORT',
     'genset': 'GENSET',
     'disjoint': 'DISJOINT',
@@ -25,6 +25,10 @@ reserved = {
     'specifics': 'SPECIFICS',
     'where': 'WHERE',
     'package': 'PACKAGE',
+    'enum': 'ENUM',         
+    'relation': 'RELATION', 
+    'specializes': 'SPECIALIZES',
+    'const': 'CONST',        
 
     # Estereótipos de classe 
     'kind': 'KIND',
@@ -33,19 +37,19 @@ reserved = {
     'quantity': 'QUANTITY',
     'quality': 'QUALITY',
     'mode': 'MODE',
-    'intrisicMode': 'INTRISICMODE',
-    'extrinsicMode': 'EXTRINSICMODE',
+    'intrisicmode': 'INTRISICMODE',
+    'extrinsicmode': 'EXTRINSICMODE',
     'role': 'ROLE',
     'phase': 'PHASE',
-    'historicalRole': 'HISTORICALROLE',
+    'historicalrole': 'HISTORICALROLE',
     'event': 'EVENT',
     'situation': 'SITUATION',
     'process': 'PROCESS',
     'category': 'CATEGORY',
     'mixin': 'MIXIN',
-    'phaseMixin': 'PHASEMIXIN',
-    'roleMixin': 'ROLEMIXIN',
-    'historicalRoleMixin': 'HISTORICALROLEMIXIN',
+    'phasemixin': 'PHASEMIXIN',
+    'rolemixin': 'ROLEMIXIN',
+    'historicalrolemixin': 'HISTORICALROLEMIXIN',
 
     # Estereótipos de relação
     'material': 'MATERIAL',
@@ -53,19 +57,19 @@ reserved = {
     'comparative': 'COMPARATIVE',
     'mediation': 'MEDIATION',
     'characterization': 'CHARACTERIZATION',
-    'externalDependence': 'EXTERNALDEPENDENCE',
-    'componentOf': 'COMPONENTOF',
-    'memberOf': 'MEMBEROF',
-    'subCollectionOf': 'SUBCOLLECTIONOF',
-    'subQualityOf': 'SUBQUALITYOF',
+    'externaldependence': 'EXTERNALDEPENDENCE',
+    'componentof': 'COMPONENTOF',
+    'memberof': 'MEMBEROF',
+    'subcollectionof': 'SUBCOLLECTIONOF',
+    'subqualityof': 'SUBQUALITYOF',
     'instantiation': 'INSTANTIATION',
     'termination': 'TERMINATION',
     'participational': 'PARTICIPATIONAL',
     'participation': 'PARTICIPATION',
-    'historicalDependence': 'HISTORICALDEPENDENCE',
+    'historicaldependence': 'HISTORICALDEPENDENCE',
     'creation': 'CREATION',
     'manifestation': 'MANIFESTATION',
-    'bringsAbout': 'BRINGSABOUT',
+    'bringsabout': 'BRINGSABOUT',
     'triggers': 'TRIGGERS',
     'composition': 'COMPOSITION',
     'aggregation': 'AGGREGATION',
@@ -89,13 +93,16 @@ tokens=[
     'NUMBER',         
     'LPAREN', 'RPAREN',
     'LBRACE', 'RBRACE',
+    'LBRACKET', 'RBRACKET',
     'COMMA',
     'MAIORIGUAL', 'MENORIGUAL',
     'MAIOR', 'MENOR',
     'CONTEM', 'CONTIDO',
     'ASTERISCO',
     'ARROBA',
-    'COLON'
+    'COLON',
+    'DOT',           
+    'HYPHEN'
 ]+ list(set(reserved.values()))
 
 
@@ -111,6 +118,10 @@ t_MAIOR = r'>'        # operador >
 t_MENOR = r'<'        # operador <
 t_CONTEM = r'<>--'
 t_CONTIDO = r'--<>'
+t_LBRACKET = r'\['   # abre colchete
+t_RBRACKET = r'\]'   # fecha colchete
+t_DOT = r'\.'        # ponto
+t_HYPHEN = r'-'      # hífen
 t_ASTERISCO = r'\*'
 t_ARROBA = r'@'
 t_COLON = r':'
