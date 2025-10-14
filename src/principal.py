@@ -1,7 +1,8 @@
 import ply.lex as lex
 import ply.yacc as yacc
+import re
 
-#palavras reservadas do dicionário TONTO
+# Palavras reservadas estruturais 
 reserved = {
     # Palavras reservadas principais 
     'ontology': 'ONTOLOGY',
@@ -14,7 +15,7 @@ reserved = {
     'datatype': 'DATATYPE',
     'annotation': 'ANNOTATION',
     'equivalentto': 'EQUIVALENTTO',
-    'disjointWith': 'DISJOINTWITH',
+    'disjointwith': 'DISJOINTWITH',
     'sameas': 'SAMEAS',
     'differentfrom': 'DIFFERENTFROM',
     'import': 'IMPORT',
@@ -28,69 +29,45 @@ reserved = {
     'enum': 'ENUM',         
     'relation': 'RELATION', 
     'specializes': 'SPECIALIZES',
-    'const': 'CONST',        
-
-    # Estereótipos de classe 
-    'kind': 'KIND',
-    'subkind': 'SUBKIND',
-    'collective': 'COLLECTIVE',
-    'quantity': 'QUANTITY',
-    'quality': 'QUALITY',
-    'mode': 'MODE',
-    'intrisicmode': 'INTRISICMODE',
-    'extrinsicmode': 'EXTRINSICMODE',
-    'role': 'ROLE',
-    'phase': 'PHASE',
-    'historicalrole': 'HISTORICALROLE',
-    'event': 'EVENT',
-    'situation': 'SITUATION',
-    'process': 'PROCESS',
-    'category': 'CATEGORY',
-    'mixin': 'MIXIN',
-    'phasemixin': 'PHASEMIXIN',
-    'rolemixin': 'ROLEMIXIN',
-    'historicalrolemixin': 'HISTORICALROLEMIXIN',
-
-    # Estereótipos de relação
-    'material': 'MATERIAL',
-    'derivation': 'DERIVATION',
-    'comparative': 'COMPARATIVE',
-    'mediation': 'MEDIATION',
-    'characterization': 'CHARACTERIZATION',
-    'externaldependence': 'EXTERNALDEPENDENCE',
-    'componentof': 'COMPONENTOF',
-    'memberof': 'MEMBEROF',
-    'subcollectionof': 'SUBCOLLECTIONOF',
-    'subqualityof': 'SUBQUALITYOF',
-    'instantiation': 'INSTANTIATION',
-    'termination': 'TERMINATION',
-    'participational': 'PARTICIPATIONAL',
-    'participation': 'PARTICIPATION',
-    'historicaldependence': 'HISTORICALDEPENDENCE',
-    'creation': 'CREATION',
-    'manifestation': 'MANIFESTATION',
-    'bringsabout': 'BRINGSABOUT',
-    'triggers': 'TRIGGERS',
-    'composition': 'COMPOSITION',
-    'aggregation': 'AGGREGATION',
-    'inherence': 'INHERENCE',
-    'value': 'VALUE',
-    'formal': 'FORMAL',
-    'constitution': 'CONSTITUTION',
     
-    # Tipos de dados 
-    'number': 'TYPE_NUMBER',
-    'string': 'TYPE_STRING',
-    'boolean': 'TYPE_BOOLEAN',
-    'date': 'TYPE_DATE',
-    'time': 'TYPE_TIME',
-    'datetime': 'TYPE_DATETIME',
+    # Tipos de dados nativos
+    'number': 'NATIVE_NUMBER',
+    'string': 'NATIVE_STRING',
+    'boolean': 'NATIVE_BOOLEAN',
+    'date': 'NATIVE_DATE',
+    'time': 'NATIVE_TIME',
+    'datetime': 'NATIVE_DATETIME',
+    
+    # Metadados
+    'const': 'META_CONST',
+    'ordered': 'META_ORDERED',
+    'derived': 'META_DERIVED',
+    'subsets': 'META_SUBSETS',
+    'redefines': 'META_REDEFINES',
 }
 
-tokens=[
-    'ID',             
-    'STRING',         
-    'NUMBER',         
+# Estereótipos de classe (case-sensitive)
+stereotypes_class = {
+    'kind', 'subkind', 'collective', 'quantity', 'quality', 'mode',
+    'intrisicMode', 'extrinsicMode', 'role', 'phase', 'historicalRole',
+    'event', 'situation', 'process', 'category', 'mixin', 'phaseMixin',
+    'roleMixin', 'historicalRoleMixin'
+}
+
+# Estereótipos de relação
+stereotypes_rel = {
+    'material', 'derivation', 'comparative', 'mediation', 'characterization',
+    'externalDependence', 'componentOf', 'memberOf', 'subCollectionOf', 
+    'subQualityOf', 'instantiation', 'termination', 'participational', 
+    'participation', 'historicalDependence', 'creation', 'manifestation', 
+    'bringsAbout', 'triggers', 'composition', 'aggregation', 'inherence', 
+    'value', 'formal', 'constitution'
+}
+
+
+# Lista de tokens
+tokens = [
+    # Símbolos
     'LPAREN', 'RPAREN',
     'LBRACE', 'RBRACE',
     'LBRACKET', 'RBRACKET',
@@ -102,8 +79,24 @@ tokens=[
     'ARROBA',
     'COLON',
     'DOT',           
-    'HYPHEN'
-]+ list(set(reserved.values()))
+    'HYPHEN',
+    
+    # Literais
+    'STRING',         
+    'NUMBER',
+    'BOOLEAN_LITERAL',
+    
+    # Identificadores específicos
+    'ID',
+    'CLASS_NAME',
+    'RELATION_NAME',
+    'INSTANCE',
+    'NEW_DATATYPE',
+    
+    # Estereótipos
+    'EST_CLASS',
+    'EST_REL',
+] + list(set(reserved.values()))
 
 
 t_LPAREN = r'\('      # abre parêntese
@@ -146,8 +139,44 @@ def t_NUMBER(t):
     return t
 
 def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value.lower(), 'ID') 
+    r'[A-Za-z][A-Za-z0-9_]*'
+    lexeme = t.value
+    low = lexeme.lower()
+    
+    if low in reserved:
+        t.type = reserved[low]
+        return t
+    
+    if lexeme in stereotypes_class:
+        t.type = 'EST_CLASS'
+        return t
+    
+    if lexeme in stereotypes_rel:
+        t.type = 'EST_REL'
+        return t
+    
+    if lexeme in ('true', 'false'):
+        t.type = 'BOOLEAN_LITERAL'
+        t.value = (lexeme == 'true')
+        return t
+    
+    if lexeme.endswith('DataType') and re.fullmatch(r'[A-Za-z]+DataType', lexeme):
+        t.type = 'NEW_DATATYPE'
+        return t
+    
+    if re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*\d+', lexeme):
+        t.type = 'INSTANCE'
+        return t
+    
+    if re.fullmatch(r'[A-Z][A-Za-z_]*', lexeme) and not re.search(r'\d', lexeme):
+        t.type = 'CLASS_NAME'
+        return t
+    
+    if re.fullmatch(r'[a-z][A-Za-z_]*', lexeme) and not re.search(r'\d', lexeme):
+        t.type = 'RELATION_NAME'
+        return t
+    
+    t.type = 'ID'
     return t
 
 def t_newline(t):
