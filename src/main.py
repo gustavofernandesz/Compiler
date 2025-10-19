@@ -1,13 +1,28 @@
 import sys
-sys.path.append('/home/ricardo/Compiler/src')
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 import principal
 
-with open('example.tonto', 'r') as f:
-    codigo = f.read()
 
+# Verifica se o usuário passa um argumento, ao invés de sempre tentar abrir o mesmo arquivo
+if len(sys.argv) < 2:
+    print("Uso: python src/main.py <arquivo.tonto>")
+    sys.exit(1)
+
+file_path = sys.argv[1]
+
+# Verificando pra ver se o arquivo existe
+if not os.path.exists(file_path):
+    print(f"Erro: arquivo '{file_path}' não encontrado.")
+    sys.exit(1)
+
+# Lendo o conteúdo do arquivo
+with open(file_path, 'r') as f:
+    data = f.read()
 lexer = principal.build()
 
-tabela, contagem = principal.lex_table(codigo, lexer)
+tabela, contagem = principal.lex_table(data, lexer)
 
 print(f"{'Linha':<8} {'Token':<25} {'Valor'}")
 print("=" * 60)

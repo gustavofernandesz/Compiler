@@ -1,0 +1,4 @@
+package University
+kind Person
+role Student specializes Person
+relation has [1] <>-- [0..*] Student
