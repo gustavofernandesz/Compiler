@@ -1,0 +1,21 @@
+package PersonModel
+
+kind Person
+subkind Man specializes Person
+subkind Woman specializes Person
+
+phase Child specializes Person
+phase Adult specializes Person
+
+role Student specializes Person
+role Teacher specializes Person
+
+datatype PhoneNumberDataType {
+    countryCode: number [1]
+    localNumber: number [1]
+}
+
+kind School {
+    name: string [1]
+    phone: PhoneNumberDataType [0..1]
+}

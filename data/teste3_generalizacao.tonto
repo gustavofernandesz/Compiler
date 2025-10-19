@@ -1,0 +1,12 @@
+package LifeCycle
+
+kind Person
+phase Child specializes Person
+phase Teenager specializes Person
+phase Adult specializes Person
+phase Elderly specializes Person
+
+disjoint complete genset AgePhases {
+    general Person
+    specifics Child, Teenager, Adult, Elderly
+}

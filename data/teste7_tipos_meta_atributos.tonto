@@ -1,0 +1,19 @@
+package HealthSystem
+
+datatype CPFDataType {
+    number: string [1] { const }
+}
+
+enum BloodType {
+    A,
+    B,
+    AB,
+    O
+}
+
+kind Patient {
+    name: string [1]
+    birthDate: date [1]
+    cpf: CPFDataType [1]
+    bloodType: BloodType [1]
+}

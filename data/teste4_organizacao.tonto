@@ -1,0 +1,13 @@
+package OrganizationModel
+
+category Organization
+collective Team specializes Organization
+roleMixin Member
+
+kind Company specializes Organization {
+    name: string [1]
+}
+
+role Employee specializes Member, Person
+relation worksFor [1..*] Employee <>-- [1] Company { subsets }
+relation collaboratesWith [1..*] Team --<> [1..*] Team { derived }

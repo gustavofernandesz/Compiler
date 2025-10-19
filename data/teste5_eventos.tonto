@@ -1,0 +1,12 @@
+package EventModel
+
+event Purchase
+situation Delivery specializes Purchase
+process Payment specializes Purchase
+
+kind Customer
+kind Product
+
+relation buys [1] Customer <>-- [1..*] Product
+relation triggers [1] Purchase <>-- [1] Payment
+relation bringsAbout [1] Payment <>-- [1] Delivery

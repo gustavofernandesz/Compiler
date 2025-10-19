@@ -1,0 +1,10 @@
+package SolarSystem
+
+kind Planet
+kind Star
+
+Planet planeta1
+Planet planeta2
+Star sol1
+
+relation orbits [1] Planet <>-- [1] Star

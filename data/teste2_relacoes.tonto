@@ -1,0 +1,14 @@
+package University
+
+kind Person
+role Professor specializes Person
+role Student specializes Person
+
+kind Course {
+    name: string [1] { const }
+    code: string [1]
+}
+
+relation teaches [1] Professor <>-- [1..*] Course
+relation attends [1] Student <>-- [1..*] Course { ordered }
+relation advises [0..1] Professor <>-- [0..*] Student { redefines attends }
