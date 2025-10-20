@@ -1,8 +1,10 @@
-import sys
-sys.path.append('/home/ricardo/Compiler/src')
+import os
 import principal
 
-with open('example.tonto', 'r') as f:
+diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
+
+with open(caminho_exemplo, 'r') as f:
     codigo = f.read()
 
 lexer = principal.build()
