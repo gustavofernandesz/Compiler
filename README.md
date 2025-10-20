@@ -27,11 +27,6 @@ cd Compiler
 
 2. Instale as dependências:
 ```bash
-pip3 install -r requirements.txt
-```
-
-Ou instale manualmente:
-```bash
 pip3 install ply
 ```
 
