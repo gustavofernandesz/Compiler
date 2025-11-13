@@ -120,3 +120,10 @@ caminho_exemplo = os.path.join(diretorio_atual, '..', 'data', 'seu_arquivo.tonto
 # Opção 3: Arquivo com caminho absoluto
 caminho_exemplo = '/caminho/completo/para/seu_arquivo.tonto'
 ```
+## Análise Sintática
+
+Lê a sequência de tokens gerada pelo léxico;
+Aplica uma gramática formal (geralmente LL ou LALR) para reconhecer as estruturas válidas da linguagem (como pacotes, classes, relações, enums, etc. no caso do TONTO);
+Constrói uma representação hierárquica de árvore sintática que expressa a relação entre os elementos do código para sua aceitação ou não;
+Detecta e reporta erros sintáticos, indicando a linha e o tipo do problema;
+Prepara os dados para a próxima fase (análise semântica), gerando tabelas e estruturas de síntese.
