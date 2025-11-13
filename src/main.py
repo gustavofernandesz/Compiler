@@ -1,5 +1,5 @@
 import os
-import principal
+import analisador_lexico
 
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
@@ -7,9 +7,9 @@ caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
 with open(caminho_exemplo, 'r') as f:
     codigo = f.read()
 
-lexer = principal.build()
+lexer = analisador_lexico.build()
 
-tabela, contagem = principal.lex_table(codigo, lexer)
+tabela, contagem = analisador_lexico.lex_table(codigo, lexer)
 
 print(f"{'Linha':<8} {'Token':<25} {'Valor'}")
 print("=" * 60)
