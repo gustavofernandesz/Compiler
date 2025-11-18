@@ -206,4 +206,20 @@ def lex_table(input_text, lexer=None):
         counts[tok.type] += 1
     return table, counts
 
+def exibir_analise_lexica(tabela, contagem):
+    print("\n" + "="*80)
+    print("ANÁLISE LÉXICA")
+    print("="*80)
+    
+    print(f"\n{'Linha':<8} {'Token':<25} {'Valor'}")
+    print("-" * 60)
+    for linha, tipo, valor in tabela:
+        print(f"{linha:<8} {tipo:<25} {valor}")
+    
+    print(f"\nTotal de tokens: {len(tabela)}")
+    print("\nContagem por tipo:")
+    print("-" * 40)
+    for tipo, qtd in sorted(contagem.items()):
+        print(f"  {tipo:<25}: {qtd}")
+
 saida = [] # tabela de simbolos
