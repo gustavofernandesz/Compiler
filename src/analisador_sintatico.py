@@ -363,6 +363,14 @@ def p_error(p):
         print("[ERRO] Fim inesperado do arquivo")
         print("  → Sugestão: Verifique se todas as chaves e parênteses foram fechados.")
 
+def exibir_analise_sintatica():
+    print("\n" + "="*80)
+    print("ANÁLISE SINTÁTICA")
+    print("="*80)
+    
+    gerar_tabela_sintese()
+    gerar_relatorio_erros()
+
 def gerar_tabela_sintese():
     print("\n" + "="*80)
     print("TABELA DE SÍNTESE - ANÁLISE SINTÁTICA")
