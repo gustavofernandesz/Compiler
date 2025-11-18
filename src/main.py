@@ -1,5 +1,6 @@
 import os
 import analisador_lexico
+import analisador_sintatico
 
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
@@ -21,3 +22,8 @@ print("\nContagem por tipo:")
 print("=" * 30)
 for tipo, qtd in contagem.items():
     print(f"{tipo:<25}: {qtd}")
+
+resultado, ast = analisador_sintatico.parse(codigo)
+
+analisador_sintatico.gerar_tabela_sinteses()
+analisador_sintatico.gerar_relatorio_erros()
