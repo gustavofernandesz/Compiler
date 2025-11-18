@@ -25,5 +25,5 @@ for tipo, qtd in contagem.items():
 
 resultado, ast = analisador_sintatico.parse(codigo)
 
-analisador_sintatico.gerar_tabela_sinteses()
+analisador_sintatico.gerar_tabela_sintese()
 analisador_sintatico.gerar_relatorio_erros()

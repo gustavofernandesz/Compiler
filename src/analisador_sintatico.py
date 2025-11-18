@@ -46,13 +46,39 @@ def p_content_list(p):
     else:
         p[0] = [p[1]]
 
+# def p_content(p):
+#     '''content : class_declaration
+#                | datatype_declaration
+#                | enum_declaration
+#                | genset_declaration
+#                | relation_declaration'''
+#     p[0] = p[1]
+
 def p_content(p):
     '''content : class_declaration
                | datatype_declaration
                | enum_declaration
                | genset_declaration
-               | relation_declaration'''
-    p[0] = p[1]
+               | relation_declaration
+               | error content
+    '''
+    # Se len(p) for 2, é uma redução normal (class_declaration, datatype_declaration, etc.)
+    if len(p) == 2:
+        p[0] = p[1]
+
+    # Se len(p) for 3 e p[1] for 'error', é a regra de recuperação: content -> error content
+    elif len(p) == 3:
+        # Pula o erro e continua com a próxima declaração (p[2])
+        # A função p_error já registrou o erro.
+        if p[2] is not None:
+            print(f"[AVISO SINTÁTICO] Recuperação de erro. Continuando a análise a partir da próxima declaração.")
+            p[0] = p[2]
+        else:
+            # Caso a próxima declaração também seja None (fim do arquivo ou erro grave)
+            p[0] = None
+
+
+
 
 def p_class_declaration(p):
     '''class_declaration : EST_CLASS CLASS_NAME LBRACE class_body RBRACE
