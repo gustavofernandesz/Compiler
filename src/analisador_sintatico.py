@@ -138,16 +138,18 @@ def p_class_body_item(p):
     p[0] = p[1]
 
 def p_attribute(p):
-    '''attribute : RELATION_NAME COLON type
-                 | RELATION_NAME COLON type metadata_block
-                 | ID COLON type
-                 | ID COLON type metadata_block
-                 | NATIVE_NUMBER COLON type
-                 | NATIVE_NUMBER COLON type metadata_block'''
-    if len(p) == 4:
-        p[0] = ('attribute', p[1], p[3], None)
+    '''attribute : RELATION_NAME COLON type cardinality_opt
+                 | RELATION_NAME COLON type cardinality_opt metadata_block
+                 | ID COLON type cardinality_opt
+                 | ID COLON type cardinality_opt metadata_block
+                 | NATIVE_NUMBER COLON type cardinality_opt
+                 | NATIVE_NUMBER COLON type cardinality_opt metadata_block
+    '''
+    if len(p) == 5:
+        p[0] = ('attribute', p[1], p[3], p[4], None)
     else:
-        p[0] = ('attribute', p[1], p[3], p[4])
+        p[0] = ('attribute', p[1], p[3], p[4], p[5])
+
 
 def p_type(p):
     '''type : NATIVE_STRING
@@ -367,6 +369,16 @@ def p_relation_symbol(p):
         p[0] = '--'
     else:
         p[0] = p[1]
+
+def p_cardinality_opt(p):
+    '''cardinality_opt : cardinality
+                       | empty'''
+    p[0] = p[1]
+
+def p_empty(p):
+    'empty :'
+    p[0] = None
+
 
 def p_error(p):
     if p:
