@@ -232,12 +232,20 @@ def p_enum_declaration(p):
         })
 
 def p_instance_list(p):
-    '''instance_list : CLASS_NAME
-                     | instance_list CLASS_NAME'''
+    '''instance_list : instance_name
+                     | instance_list COMMA instance_name
+                     | instance_list instance_name'''
     if len(p) == 2:
         p[0] = [p[1]]
+    elif len(p) == 4:
+        p[0] = p[1] + [p[3]]
     else:
         p[0] = p[1] + [p[2]]
+
+def p_instance_name(p):
+    '''instance_name : INSTANCE
+                     | CLASS_NAME'''
+    p[0] = p[1]
 
 def p_genset_declaration(p):
     '''genset_declaration : modifiers GENSET CLASS_NAME WHERE class_list SPECIALIZES CLASS_NAME
@@ -388,7 +396,10 @@ def p_error(p):
         if p.type == 'CLASS_NAME':
             suggestion = "Verifique se há uma palavra reservada ou estereótipo faltando antes do nome da classe."
         elif p.type == 'LBRACE':
-            suggestion = "Verifique se a declaração anterior está completa."
+            suggestion = ("Verifique se a declaração anterior está completa. "
+                         "Para classes, use um estereótipo (kind, phase, role, etc.). "
+                         "Para tipos de dados, use 'datatype'. "
+                         "Para enumerações, use 'enum'.")
         elif p.type == 'RBRACE':
             suggestion = "Pode estar faltando um atributo, relação ou vírgula."
         
