@@ -1,15 +1,25 @@
 # Compilador 
 
-# PROJETO DE ANÁLISE LÉXICA - TEXTUAL ONTOLOGY LANGUAGE
+# PROJETO DE ANÁLISE LÉXICA E SINTÁTICA - TEXTUAL ONTOLOGY LANGUAGE
 
-Esse projeto faz as seguintes funcionalidades léxicas:
+Este projeto implementa um compilador para a linguagem TONTO (Textual Ontology Language) com as seguintes funcionalidades:
+
+## ANÁLISE LÉXICA
 * Identificação de esteriótipos de classe, esteriótipos de relações, palavras reservadas, cardinalidades, símbolos especiais, convenção para nomes de classe, convenção para nomes de relações, convenção para nomes de instâncias, tipos de dados nativos, novos tipos, meta-atributos e suas propriedades.
 * Validação e classificação de tokens de acordo com suas regras, como identificadores, números inteiros, operadores aritméticos, palavras reservadas e delimitadores.
-* Registro de tokens.
+* Registro de tokens em tabelas formatadas.
+
+## ANÁLISE SINTÁTICA
+* Reconhecimento de estruturas da linguagem através de gramática formal LALR.
+* Validação de declarações de pacotes, classes, tipos de dados, enumerações, relações e conjuntos de generalização.
+* Construção de árvore sintática abstrata (AST).
+* Detecção e relatório de erros sintáticos com sugestões de correção.
+* Geração de tabela de síntese com elementos identificados.
 
 ## FERRAMENTAS UTILIZADAS
 
-* Linguagem Python e biblioteca PLY para análise léxica.
+* Linguagem Python 3.6 ou superior
+* Biblioteca PLY (Python Lex-Yacc) para análise léxica e sintática
 * Ambiente de trabalho: PyCharm 2025.2.2 nos sistemas operacionais Windows e Linux (Debian)
 
 ## PRÉ-REQUISITOS
@@ -35,9 +45,12 @@ pip3 install ply
 ```
 Compiler/
 ├── src/
-│   ├── principal.py    # Analisador léxico (lexer) da linguagem TONTO
-│   ├── main.py         # Script de teste do lexer
-│   └── example.tonto   # Arquivo de exemplo em TONTO
+│   ├── analisador_lexico.py     # Analisador léxico (lexer) da linguagem TONTO
+│   ├── analisador_sintatico.py  # Analisador sintático (parser) da linguagem TONTO
+│   ├── main.py                  # Script principal com menu interativo
+│   ├── example.tonto            # Arquivo de exemplo em TONTO
+│   ├── parser.out               # Arquivo de saída do parser (gerado automaticamente)
+│   └── parsetab.py              # Tabela de parsing (gerada automaticamente)
 ├── data/
 │   └── data.txt
 └── README.md
@@ -45,7 +58,7 @@ Compiler/
 
 ## COMO EXECUTAR
 
-### Executar análise léxica do arquivo de exemplo
+### Executar o compilador
 
 O script pode ser executado de qualquer diretório:
 
@@ -60,11 +73,30 @@ cd src
 python3 main.py
 ```
 
-Este comando irá:
-1. Ler o arquivo `example.tonto`
-2. Realizar a análise léxica
-3. Exibir uma tabela formatada com os tokens identificados (linha, tipo, valor)
-4. Mostrar a contagem de tokens por tipo
+### Menu Interativo
+
+Ao executar o programa, será apresentado um menu com as seguintes opções:
+
+```
+============================================================
+Selecione o tipo de análise:
+[1] - Análise léxica
+[2] - Análise sintática
+[0] - sair
+============================================================
+```
+
+#### Opção 1 - Análise Léxica
+Realiza a análise léxica do arquivo `example.tonto` e exibe:
+* Tabela formatada com os tokens identificados (linha, tipo, valor)
+* Total de tokens encontrados
+* Contagem de tokens por tipo
+
+#### Opção 2 - Análise Sintática
+Realiza a análise sintática do arquivo `example.tonto` e exibe:
+* Tabela de síntese com todas as estruturas identificadas (pacote, classes, tipos de dados, enumerações, relações e conjuntos de generalização)
+* Relatório de erros sintáticos com sugestões de correção
+* Análise detalhada é salva no arquivo `parser.out`
 
 
 ## TIPOS DE TOKENS RECONHECIDOS
@@ -106,9 +138,63 @@ Este comando irá:
 - CONTEM `<>--`, CONTIDO `--<>`
 - ARROBA `@`, ASTERISCO `*`
 
+## ESTRUTURAS SINTÁTICAS RECONHECIDAS
+
+### Declaração de Pacote
+```
+package NomeDoPacote
+```
+
+### Declaração de Classes
+```
+estereotipo NomeDaClasse {
+    atributo: tipo [cardinalidade] {metadados}
+    @estereotipo [card] simbolo [card] ClasseRelacionada
+}
+
+estereotipo NomeDaClasse specializes ClassePai
+```
+
+### Declaração de Tipos de Dados
+```
+datatype NomeDoTipo {
+    atributo: tipo [cardinalidade]
+}
+```
+
+### Declaração de Enumerações
+```
+enum NomeEnum {
+    Valor1, Valor2, Valor3
+}
+```
+
+### Declaração de Relações
+```
+@estereotipo relation ClasseOrigem [card] simbolo [card] ClasseDestino
+
+relation ClasseOrigem [card] simbolo nomeRelacao simbolo [card] ClasseDestino
+```
+
+### Conjuntos de Generalização
+```
+genset NomeGenSet {
+    general ClasseGeral
+    specifics ClasseEspecifica1, ClasseEspecifica2
+}
+
+disjoint complete genset NomeGenSet where ClasseEsp1, ClasseEsp2 specializes ClasseGeral
+```
+
+### Cardinalidades
+- `[N]` - Cardinalidade exata
+- `[N..M]` - Cardinalidade com intervalo
+- `[N..*]` - Cardinalidade com limite superior indefinido
+- `[*]` - Cardinalidade indefinida
+
 ## PERSONALIZAR ANÁLISE
 
-Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py`:
+Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py` na linha 6:
 
 ```python
 # Opção 1: Arquivo no mesmo diretório do main.py
@@ -120,10 +206,28 @@ caminho_exemplo = os.path.join(diretorio_atual, '..', 'data', 'seu_arquivo.tonto
 # Opção 3: Arquivo com caminho absoluto
 caminho_exemplo = '/caminho/completo/para/seu_arquivo.tonto'
 ```
-## Análise Sintática
 
-Lê a sequência de tokens gerada pelo léxico;
-Aplica uma gramática formal (geralmente LL ou LALR) para reconhecer as estruturas válidas da linguagem (como pacotes, classes, relações, enums, etc. no caso do TONTO);
-Constrói uma representação hierárquica de árvore sintática que expressa a relação entre os elementos do código para sua aceitação ou não;
-Detecta e reporta erros sintáticos, indicando a linha e o tipo do problema;
-Prepara os dados para a próxima fase (análise semântica), gerando tabelas e estruturas de síntese.
+## DETALHES DA IMPLEMENTAÇÃO
+
+### Analisador Léxico
+* Implementado usando PLY (Python Lex-Yacc)
+* Reconhece tokens através de expressões regulares
+* Suporta comentários de linha única (`//`) e multilinha (`/* */`)
+* Diferencia tipos de identificadores por convenção de nomenclatura
+
+### Analisador Sintático
+* Implementado usando PLY com gramática LALR
+* Constrói árvore sintática abstrata (AST) durante o parsing
+* Implementa recuperação de erros para continuar análise após encontrar problemas
+* Gera tabela de síntese com estatísticas dos elementos encontrados
+* Produz relatório detalhado de erros com sugestões de correção
+
+### Gramática
+A gramática reconhece a estrutura completa da linguagem TONTO incluindo:
+* Declarações de pacotes
+* Classes com estereótipos OntoUML
+* Relações internas e externas com cardinalidades
+* Tipos de dados customizados
+* Enumerações
+* Conjuntos de generalização (disjoint, complete)
+* Meta-atributos (const, ordered, derived, subsets, redefines)
