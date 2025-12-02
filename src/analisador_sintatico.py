@@ -25,18 +25,43 @@ class OntologyAST:
 ast = OntologyAST()
 
 def p_program(p):
-    '''program : package_declaration content_list
+    '''program : import_list package_declaration content_list
+               | import_list package_declaration
+               | package_declaration content_list
                | package_declaration'''
-    if len(p) == 3:
-        p[0] = ('program', p[1], p[2])
-    else:
+    if len(p) == 4:
+        p[0] = ('program', p[2], p[3], p[1])  # imports, package, content
+        ast.package_name = p[2][1]
+        ast.imports = p[1]
+    elif len(p) == 3:
+        p[0] = ('program', p[2], [], p[1])
+        ast.package_name = p[2][1]
+        ast.imports = p[1]
+    elif len(p) == 2:
         p[0] = ('program', p[1], [])
-    ast.package_name = p[1][1]
+        ast.package_name = p[1][1]
+        ast.imports = []
+
 
 def p_package_declaration(p):
     '''package_declaration : PACKAGE CLASS_NAME
                           | PACKAGE RELATION_NAME'''
     p[0] = ('package', p[2])
+
+
+def p_import_declaration(p):
+    '''import_declaration : IMPORT CLASS_NAME
+                          | IMPORT RELATION_NAME'''
+    p[0] = ('import', p[2])
+
+def p_import_list(p):
+    '''import_list : import_list import_declaration
+                   | import_declaration'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[2]]
+
 
 def p_content_list(p):
     '''content_list : content_list content
