@@ -29,15 +29,27 @@ def p_program(p):
                | import_list package_declaration
                | package_declaration content_list
                | package_declaration'''
-    if len(p) == 4:
-        p[0] = ('program', p[2], p[3], p[1])  # imports, package, content
+
+    # Caso: import_list package_declaration content_list
+    if len(p) == 4 and isinstance(p[1], list):
+        p[0] = ('program', p[2], p[3], p[1])
         ast.package_name = p[2][1]
         ast.imports = p[1]
-    elif len(p) == 3:
+
+    # Caso: import_list package_declaration
+    elif len(p) == 3 and isinstance(p[1], list):
         p[0] = ('program', p[2], [], p[1])
         ast.package_name = p[2][1]
         ast.imports = p[1]
-    elif len(p) == 2:
+
+    # Caso: package_declaration content_list
+    elif len(p) == 3:
+        p[0] = ('program', p[1], p[2])
+        ast.package_name = p[1][1]
+        ast.imports = []
+
+    # Caso: apenas package_declaration
+    else:
         p[0] = ('program', p[1], [])
         ast.package_name = p[1][1]
         ast.imports = []

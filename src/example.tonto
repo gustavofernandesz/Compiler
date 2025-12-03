@@ -1,50 +1,13 @@
-import Song
-package example
+package CarOwnership 
 
-kind Person {
-	name: string
-	age: number
-	gender: Gender
-	birthDate: date {const}
+kind Organization
+subkind CarAgency specializes Organization
+kind Car
+
+relator CarOwnership {
+    @mediation
+    -- involvesOwner -- [1] CarAgency
+
+    @mediation
+    -- involvesProperty -- [1] Car
 }
-
-phase Child specializes Person
-
-phase Adult specializes Person
-
-enum Gender { Male, Female, Other }
-
-datatype Address {
-	street: string
-	number: number
-	city: string
-}
-
-relation Person [0..*] -- hasFriend -- [0..*] Person
-
-disjoint complete genset PersonAgeGroup where Child, Adult specializes Person
-
-genset PersonAgeGroup {
-	general Person
-	specifics Child, Adult
-}
-
-kind University {
-	@componentOf [1] <>-- [1..*] Department
-}
-
-kind Department {
-	name: string
-}
-
-kind Employee {
-	employeeId: number
-	name: string
-}
-
-kind EmploymentContract {
-	startDate: date
-	endDate: date {derived}
-}
-
-@mediation relation EmploymentContract [1..*] -- [1] Employee
