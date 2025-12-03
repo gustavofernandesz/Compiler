@@ -52,7 +52,7 @@ stereotypes_class = {
     'kind', 'subkind', 'collective', 'quantity', 'quality', 'mode',
     'intrisicMode', 'extrinsicMode', 'role', 'phase', 'historicalRole',
     'event', 'situation', 'process', 'category', 'mixin', 'phaseMixin',
-    'roleMixin', 'historicalRoleMixin'
+    'roleMixin', 'historicalRoleMixin', 'relator'
 }
 
 # Estereótipos de relação

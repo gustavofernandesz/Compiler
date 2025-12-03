@@ -54,7 +54,6 @@ def p_program(p):
         ast.package_name = p[1][1]
         ast.imports = []
 
-
 def p_package_declaration(p):
     '''package_declaration : PACKAGE CLASS_NAME
                           | PACKAGE RELATION_NAME'''
@@ -90,6 +89,19 @@ def p_content_list(p):
 #                | genset_declaration
 #                | relation_declaration'''
 #     p[0] = p[1]
+
+
+def p_internal_relation_named(p):
+    '''internal_relation : ARROBA EST_REL HYPHEN HYPHEN RELATION_NAME HYPHEN HYPHEN cardinality CLASS_NAME
+                         | HYPHEN HYPHEN RELATION_NAME HYPHEN HYPHEN cardinality CLASS_NAME'''
+
+    if len(p) == 10:
+        # @mediation -- name -- [card] Class
+        p[0] = ('internal_relation', p[2], p[5], p[8], p[9])
+    else:
+        # -- name -- [card] Class
+        p[0] = ('internal_relation', None, p[3], p[5], p[6])
+
 
 def p_content(p):
     '''content : class_declaration
