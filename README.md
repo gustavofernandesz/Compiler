@@ -1,6 +1,6 @@
 # Compilador 
 
-# PROJETO DE ANÁLISE LÉXICA E SINTÁTICA - TEXTUAL ONTOLOGY LANGUAGE
+# PROJETO DE ANÁLISE LÉXICA, SINTÁTICA E SEMÂNTICA - TEXTUAL ONTOLOGY LANGUAGE
 
 Este projeto implementa um compilador para a linguagem TONTO (Textual Ontology Language) com as seguintes funcionalidades:
 
@@ -15,6 +15,11 @@ Este projeto implementa um compilador para a linguagem TONTO (Textual Ontology L
 * Construção de árvore sintática abstrata (AST).
 * Detecção e relatório de erros sintáticos com sugestões de correção.
 * Geração de tabela de síntese com elementos identificados.
+
+## ANÁLISE SEMÂNTICA
+* Validação de padrões de projetos de ontologias (Ontology Design Patterns - ODP)
+* Identificação de padrões completos no código
+* Identificação de padrões incompletos através de sobrecarregamento
 
 ## FERRAMENTAS UTILIZADAS
 
@@ -97,6 +102,9 @@ Realiza a análise sintática do arquivo `example.tonto` e exibe:
 * Tabela de síntese com todas as estruturas identificadas (pacote, classes, tipos de dados, enumerações, relações e conjuntos de generalização)
 * Relatório de erros sintáticos com sugestões de correção
 * Análise detalhada é salva no arquivo `parser.out`
+
+#### Opção 3 - Análise Semântica
+* --A ser implementada--
 
 
 ## TIPOS DE TOKENS RECONHECIDOS
@@ -192,6 +200,105 @@ disjoint complete genset NomeGenSet where ClasseEsp1, ClasseEsp2 specializes Cla
 - `[N..*]` - Cardinalidade com limite superior indefinido
 - `[*]` - Cardinalidade indefinida
 
+## ESTRUTURAS SEMÂNTICAS RECONHECIDAS
+
+### Subkind Pattern
+```
+package Subkind_Pattern
+
+kind ClassName
+subkind SubclassName1 specializes ClassName
+subkind SubclassName2 specializes ClassName
+
+disjoint complete genset Kind_Subkind_Genset_Name {
+    general ClassName
+    specifics SubclassName1, SubclassName2
+}
+// "complete" is optional, but "disjoint" applies to subkinds
+```
+
+### Role Pattern
+```
+package Role_Pattern
+
+kind ClassName
+role Role_Name1 specializes ClassName
+role Role_Name2 specializes ClassName
+
+complete genset Class_Role_Genset_Name {
+    general ClassName
+    specifics Role_Name1, Role_Name2
+}
+// "complete" is optional, but "disjoint" doesn't apply to roles
+```
+
+### Phase Pattern
+```
+package Phase_Pattern
+
+kind ClassName
+
+phase Phase_Name1 specializes ClassName
+phase Phase_Name2 specializes ClassName
+phase Phase_NameN specializes ClassName
+
+disjoint complete genset Class_Phase_Genset_Name {
+    general ClassName
+    specifics Phase_Name1, Phase_Name2, Phase_NameN
+}
+// "disjoint" is mandatory for phases, but "complete" is optional
+```
+
+### Relator Pattern
+```
+package Relator_Pattern
+
+kind ClassName1
+kind ClassName2
+
+role Role_Name1 specializes ClassName1
+role Role_Name2 specializes ClassName2
+
+relator Relator_Name{
+    @mediation [1..*] -- [1..*] Role_Name1
+    @mediation [1..*] -- [1..*] Role_Name2
+}
+
+@material relation Role_Name1 [1..*] -- relationName -- [1..*] Role_Name2
+// "relationName" can be replaced by a specific name for the relation
+```
+
+### Mode Pattern
+```
+package Mode_Pattern
+
+kind ClassName1
+kind ClassName2
+
+mode Mode_Name1 {
+    @characterization [1..*] -- [1] ClassName1
+    @externalDependence [1..*] -- [1] ClassName2
+}
+```
+
+### RoleMixin Pattern
+```
+package RoleMixin_Pattern
+
+kind ClassName1
+kind ClassName2
+
+roleMixin RoleMixin_Name
+
+role Role_Name1 specializes ClassName1, RoleMixin_Name
+role Role_Name2 specializes ClassName2, RoleMixin_Name
+
+disjoint complete genset RoleMixin_Genset_Name {
+    general RoleMixin_Name
+    specifics Role_Name1, Role_Name2
+}
+```
+
 ## PERSONALIZAR ANÁLISE
 
 Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py` na linha 6:
@@ -231,3 +338,4 @@ A gramática reconhece a estrutura completa da linguagem TONTO incluindo:
 * Enumerações
 * Conjuntos de generalização (disjoint, complete)
 * Meta-atributos (const, ordered, derived, subsets, redefines)
+* Padrões de Projeto de Ontologia (Ontology Design Patterns - ODP)
