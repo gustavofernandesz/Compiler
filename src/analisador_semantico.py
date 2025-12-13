@@ -172,10 +172,26 @@ def validar_relator(ast):
 # MODE PATTERN
 # --------------------------------------------
 def validar_mode(ast):
-    if any(c['stereotype'] == 'mode' for c in ast.classes):
-        return [("Mode presente", "Há classes do tipo mode (não validadas ainda).")]
-    else:
+    resultados = []
+    modes = [c for c in ast.classes if c['stereotype'] == 'mode']
+    
+    if not modes:
         return [("Mode ausente", "Nenhum Mode Pattern encontrado.")]
+
+    for m in modes:
+        rels = m['internal_relations']
+        tem_char = any(r[1] == 'characterization' for r in rels) 
+        tem_ext_dep = any(r[1] == 'externalDependence' for r in rels)
+        
+        if tem_char and tem_ext_dep:
+            resultados.append(("Mode completo", f"{m['name']} possui characterization e externalDependence."))
+        else:
+            faltando = []
+            if not tem_char: faltando.append("characterization")
+            if not tem_ext_dep: faltando.append("externalDependence")
+            resultados.append(("Mode incompleto", f"{m['name']} falha. Faltando: {', '.join(faltando)}."))
+            
+    return resultados
 
     # --------------------------------------------
 
@@ -183,10 +199,30 @@ def validar_mode(ast):
 # ROLEMIXIN PATTERN
 # --------------------------------------------
 def validar_rolemixin(ast):
-    if any(c['stereotype'] == 'roleMixin' for c in ast.classes):
-        return [("RoleMixin presente", "Há RoleMixins declarados.")]
-    else:
-        return [("RoleMixin ausente", "Nenhum RoleMixin Pattern encontrado.")]
+    resultados = []
+    rolemixins = [c for c in ast.classes if c['stereotype'] == 'roleMixin']
+    
+    if not rolemixins:
+        return [("RoleMixin ausente", "Nenhum RoleMixin encontrado.")]
+
+    for rm in rolemixins:
+        genset_associado = None
+        for g in ast.gensets:
+            if g['general'] == rm['name']:
+                genset_associado = g
+                break
+        
+        if not genset_associado:
+            resultados.append(("RoleMixin incompleto", f"{rm['name']} não é general de nenhum genset."))
+            continue
+
+        mods = genset_associado['modifiers'] or []
+        if 'disjoint' in mods and 'complete' in mods:
+             resultados.append(("RoleMixin completo", f"{rm['name']} validado com genset {genset_associado['name']}."))
+        else:
+             resultados.append(("RoleMixin incompleto", f"{rm['name']} possui genset, mas não é disjoint e complete."))
+
+    return resultados
 
 
 # --------------------------------------------
