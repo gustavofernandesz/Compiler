@@ -1,6 +1,7 @@
 import os
 import analisador_lexico
 import analisador_sintatico
+import analisador_semantico
 
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
@@ -13,8 +14,9 @@ while(opcao!= 0):
     print("Selecione o tipo de análise:")
     print("[1] - Análise léxica")
     print("[2] - Análise sintática")
+    print("[3] - Análise semântica")
     print("[0] - sair")
-    opcao = input("Escolha 1/2: ").strip()
+    opcao = input("Escolha 1/2/3: ").strip()
     print("="*60)
     if opcao == "1" :
 
@@ -39,7 +41,11 @@ while(opcao!= 0):
         analisador_sintatico.gerar_relatorio_erros()
         print("Esta é uma análise simplificada - para a análise completa, referir-se ao arquivo parser.out")
 
+    elif opcao == "3":
+        resultado, ast = analisador_sintatico.parse(codigo)
+        analisador_semantico.analisar(ast)
+
     elif opcao == "0":
-        opcao = 0;
+        opcao = 0
     else:
         print("Opção inválida!")
