@@ -237,34 +237,39 @@ class AnalisadorSemantico:
         for relator in relators:
             nome = relator['name']
             
-            mediacoes = []
-            erros_de_tipo = []
+            mediacoes_validas = 0
+            mediacoes_invalidas = []
 
             for rel in relator['internal_relations']:
                 if len(rel) > 1 and rel[1] == 'mediation':
-                    mediacoes.append(rel)
                     nome_alvo = rel[5] if len(rel) > 5 else (rel[4] if len(rel) > 4 else None)
 
                     if nome_alvo:
                         classe_alvo = self.classes_por_nome.get(nome_alvo)
                         if classe_alvo:
                             est_alvo = classe_alvo.get('stereotype')
-                            if est_alvo != 'role':
-                                erros_de_tipo.append(f"Mediação '{nome_alvo}' não é um role.")
+                            if est_alvo == 'role':
+                                mediacoes_validas += 1
+                            else:
+                                mediacoes_invalidas.append(f"'{nome_alvo}' é {est_alvo}, não role")
                         else:
-                            erros_de_tipo.append(f"Mediação '{nome_alvo}' não encontrada.")
+                            mediacoes_invalidas.append(f"'{nome_alvo}' não encontrada")
             
-            num_mediacoes = len(mediacoes)
-            
-            if num_mediacoes >= 2:
+            if mediacoes_validas >= 2:
                 self._adicionar_resultado(
                     'OK', 'Relator',
-                    f"Relator completo: {nome} possui {num_mediacoes} mediações."
+                    f"Relator completo: {nome} possui {mediacoes_validas} mediações válidas (para roles)."
                 )
-            elif num_mediacoes == 1:
+            elif mediacoes_validas == 1:
                 self._adicionar_resultado(
                     'ALERTA', 'Relator',
-                    f"Relator incompleto: '{nome}' possui apenas {num_mediacoes} mediação (mínimo 2)."
+                    f"Relator incompleto: '{nome}' possui apenas {mediacoes_validas} mediação válida (mínimo 2)."
+                )
+            elif mediacoes_invalidas:
+                erros = "; ".join(mediacoes_invalidas)
+                self._adicionar_resultado(
+                    'ALERTA', 'Relator',
+                    f"Relator incompleto: '{nome}' não possui mediações para roles. Problemas: {erros}."
                 )
             else:
                 self._adicionar_resultado(
