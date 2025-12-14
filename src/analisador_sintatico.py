@@ -461,62 +461,79 @@ def p_error(p):
         print("[ERRO] Fim inesperado do arquivo")
         print("  → Sugestão: Verifique se todas as chaves e parênteses foram fechados.")
 
+LARGURA = 80
+
+def _linha(char="="):
+    return char * LARGURA
+
+def _cabecalho(titulo):
+    print("\n" + _linha())
+    print(titulo.center(LARGURA))
+    print(_linha())
+
+def _subcabecalho(titulo):
+    print("\n" + _linha("-"))
+    print(titulo)
+    print(_linha("-"))
+
 def exibir_analise_sintatica():
-    print("\n" + "="*80)
-    print("ANÁLISE SINTÁTICA")
-    print("="*80)
-    
+    _cabecalho("ANÁLISE SINTÁTICA")
     gerar_tabela_sintese()
     gerar_relatorio_erros()
 
 def gerar_tabela_sintese():
-    print("\n" + "="*80)
-    print("TABELA DE SÍNTESE - ANÁLISE SINTÁTICA")
-    print("="*80)
+    _cabecalho("ANÁLISE SINTÁTICA")
     
-    print(f"\nPACOTE: {ast.package_name if ast.package_name else 'Nenhum'}")
+    _subcabecalho("INFORMAÇÕES DO PACOTE")
+    print(f"\n  Pacote: {ast.package_name if ast.package_name else 'Não definido'}")
     
-    print(f"\nCLASSES: {len(ast.classes)}")
+    _subcabecalho(f"CLASSES ({len(ast.classes)})")
     if ast.classes:
         for cls in ast.classes:
-            specializes_info = f" -> especializa {cls['specializes']}" if cls['specializes'] else ""
+            specializes_info = f" -> {cls['specializes']}" if cls['specializes'] else ""
             attrs_count = len(cls['attributes'])
             rels_count = len(cls['internal_relations'])
-            print(f"  {cls['name']} ({cls['stereotype']}){specializes_info}")
-            print(f"    {attrs_count} atributo(s)")
+            print(f"\n  [{cls['stereotype']}] {cls['name']}{specializes_info}")
+            
             if attrs_count > 0:
+                print(f"    Atributos ({attrs_count}):")
                 for attr in cls['attributes']:
                     attr_name = attr[1]
                     attr_type = attr[2][1] if attr[2] else "?"
                     metadata = f" {attr[3]}" if attr[3] else ""
-                    print(f"      {attr_name}: {attr_type}{metadata}")
-            print(f"    {rels_count} relação(ões) interna(s)")
+                    print(f"      - {attr_name}: {attr_type}{metadata}")
+            
             if rels_count > 0:
+                print(f"    Relações internas ({rels_count}):")
                 for rel in cls['internal_relations']:
                     stereotype = f"@{rel[1]}" if rel[1] else ""
-                    target = rel[5] if len(rel) > 5 else "?"
-                    print(f"      {stereotype} para {target}")
+                    target = rel[5] if len(rel) > 5 else (rel[4] if len(rel) > 4 else "?")
+                    print(f"      - {stereotype} -> {target}")
+    else:
+        print("\n  Nenhuma classe encontrada.")
     
-    print(f"\nTIPOS DE DADOS CUSTOMIZADOS: {len(ast.datatypes)}")
+    _subcabecalho(f"TIPOS DE DADOS ({len(ast.datatypes)})")
     if ast.datatypes:
         for dt in ast.datatypes:
             attrs_count = len(dt['attributes'])
-            print(f"  {dt['name']} ({attrs_count} atributo(s))")
-            for attr in dt['attributes']:
-                attr_name = attr[1]
-                attr_type = attr[2][1] if attr[2] else "?"
-                print(f"    {attr_name}: {attr_type}")
+            print(f"\n  {dt['name']}")
+            if attrs_count > 0:
+                for attr in dt['attributes']:
+                    attr_name = attr[1]
+                    attr_type = attr[2][1] if attr[2] else "?"
+                    print(f"    - {attr_name}: {attr_type}")
+    else:
+        print("\n  Nenhum tipo de dado customizado.")
     
-    print(f"\nENUMERAÇÕES: {len(ast.enums)}")
+    _subcabecalho(f"ENUMERAÇÕES ({len(ast.enums)})")
     if ast.enums:
         for enum in ast.enums:
-            instances_count = len(enum['instances'])
-            print(f"  {enum['name']} ({instances_count} instância(s))")
-            if instances_count > 0:
-                instances_str = ", ".join(enum['instances'])
-                print(f"    {instances_str}")
+            instances_str = ", ".join(enum['instances']) if enum['instances'] else "vazio"
+            print(f"\n  {enum['name']}: {instances_str}")
+    else:
+        print("\n  Nenhuma enumeração encontrada.")
     
-    print(f"\nRELAÇÕES EXTERNAS: {len(ast.relations)}")
+    _subcabecalho(f"RELAÇÕES EXTERNAS ({len(ast.relations)})")
     if ast.relations:
         for rel in ast.relations:
             stereotype = f"@{rel.get('stereotype')} " if rel.get('stereotype') else ""
@@ -537,43 +554,45 @@ def gerar_tabela_sintese():
             else:
                 range_card_str = str(range_card)
             
-            print(f"  {stereotype}{domain} {card_str}{name_str}{range_card_str} {range_cls}")
+            print(f"\n  {stereotype}{domain} {card_str}{name_str}{range_card_str} {range_cls}")
+    else:
+        print("\n  Nenhuma relação externa encontrada.")
     
-    print(f"\nCONJUNTOS DE GENERALIZAÇÃO: {len(ast.gensets)}")
+    _subcabecalho(f"CONJUNTOS DE GENERALIZAÇÃO ({len(ast.gensets)})")
     if ast.gensets:
         for genset in ast.gensets:
             modifiers_str = ""
             if genset['modifiers']:
-                modifiers_str = f" ({', '.join(genset['modifiers'])})"
+                modifiers_str = f" [{', '.join(genset['modifiers'])}]"
             specifics_str = ", ".join(genset['specifics'])
-            print(f"  {genset['name']}{modifiers_str}")
+            print(f"\n  {genset['name']}{modifiers_str}")
             print(f"    Geral: {genset['general']}")
             print(f"    Específicas: {specifics_str}")
-    
-    print("\n" + "="*80)
+    else:
+        print("\n  Nenhum conjunto de generalização.")
 
 def gerar_relatorio_erros():
-    print("\n" + "="*80)
-    print("RELATÓRIO DE ERROS")
-    print("="*80)
+    _subcabecalho("RESULTADO")
     
     if not ast.errors:
-        print("\nNenhum erro sintático encontrado.")
-        print("A análise foi concluída com sucesso.")
+        print("\n  [OK] Nenhum erro sintático encontrado.")
+        print("  Análise concluída com sucesso.")
     else:
-        print(f"\n{len(ast.errors)} erro(s) encontrado(s):\n")
+        print(f"\n  [ERRO] {len(ast.errors)} erro(s) encontrado(s):\n")
         for i, error in enumerate(ast.errors, 1):
             line = error['line']
             msg = error['message']
             suggestion = error['suggestion']
             
             line_str = f"Linha {line}" if line > 0 else "Final do arquivo"
-            print(f"{i}. [{line_str}] {msg}")
+            print(f"  {i}. [{line_str}] {msg}")
             if suggestion:
-                print(f"   Sugestão: {suggestion}")
-            print()
+                print(f"     Sugestão: {suggestion}")
     
-    print("="*80)
+    print("\n" + _linha())
+    status = "com erros" if ast.errors else "com sucesso"
+    print(f"Análise sintática concluída {status}.".center(LARGURA))
+    print(_linha())
 
 def reset_ast():
     global ast

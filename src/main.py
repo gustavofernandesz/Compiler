@@ -3,49 +3,86 @@ import analisador_lexico
 import analisador_sintatico
 import analisador_semantico
 
+LARGURA = 80
+
+def linha(char="="):
+    return char * LARGURA
+
+def cabecalho(titulo):
+    print("\n" + linha())
+    print(titulo.center(LARGURA))
+    print(linha())
+
+def subcabecalho(titulo):
+    print("\n" + linha("-"))
+    print(titulo)
+    print(linha("-"))
+
+def menu():
+    print("\n" + linha())
+    print("COMPILADOR TONTO".center(LARGURA))
+    print("Análise Léxica, Sintática e Semântica".center(LARGURA))
+    print(linha())
+    print("\n  [1] Análise Léxica")
+    print("  [2] Análise Sintática")
+    print("  [3] Análise Semântica")
+    print("  [0] Sair")
+    print()
+
+def analise_lexica(codigo):
+    cabecalho("ANÁLISE LÉXICA")
+    
+    lexer = analisador_lexico.build()
+    tabela, contagem = analisador_lexico.lex_table(codigo, lexer)
+    
+    subcabecalho("TABELA DE TOKENS")
+    print(f"\n  {'LINHA':<8} {'TOKEN':<25} {'VALOR'}")
+    print("  " + "-" * 50)
+    for linha_num, tipo, valor in tabela:
+        print(f"  {linha_num:<8} {tipo:<25} {valor}")
+    
+    subcabecalho("RESUMO")
+    print(f"\n  Total de tokens: {len(tabela)}")
+    print()
+    print(f"  {'TIPO':<25} {'QTD':>5}")
+    print("  " + "-" * 32)
+    for tipo, qtd in sorted(contagem.items()):
+        print(f"  {tipo:<25} {qtd:>5}")
+    
+    print("\n" + linha())
+    print("Análise léxica concluída com sucesso.".center(LARGURA))
+    print(linha())
+
+def analise_sintatica(codigo):
+    resultado, ast = analisador_sintatico.parse(codigo)
+    analisador_sintatico.gerar_tabela_sintese()
+    analisador_sintatico.gerar_relatorio_erros()
+
+def analise_semantica(codigo):
+    resultado, ast = analisador_sintatico.parse(codigo)
+    analisador_semantico.analisar(ast)
+
+
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_exemplo = os.path.join(diretorio_atual, 'example.tonto')
 
 with open(caminho_exemplo, 'r') as f:
     codigo = f.read()
-opcao = 3
-while(opcao!= 0):
-    print("="*60)
-    print("Selecione o tipo de análise:")
-    print("[1] - Análise léxica")
-    print("[2] - Análise sintática")
-    print("[3] - Análise semântica")
-    print("[0] - sair")
-    opcao = input("Escolha 1/2/3: ").strip()
-    print("="*60)
-    if opcao == "1" :
 
-        lexer = analisador_lexico.build()
-
-        tabela, contagem = analisador_lexico.lex_table(codigo, lexer)
-
-        print(f"{'Linha':<8} {'Token':<25} {'Valor'}")
-        print("=" * 60)
-        for linha, tipo, valor in tabela:
-            print(f"{linha:<8} {tipo:<25} {valor}")
-
-        print(f"\nTotal de tokens: {len(tabela)}")
-        print("\nContagem por tipo:")
-        print("=" * 30)
-        for tipo, qtd in contagem.items():
-            print(f"{tipo:<25}: {qtd}")
-
+opcao = None
+while opcao != "0":
+    menu()
+    opcao = input("  Escolha uma opção: ").strip()
+    
+    if opcao == "1":
+        analise_lexica(codigo)
     elif opcao == "2":
-        resultado, ast = analisador_sintatico.parse(codigo)
-        analisador_sintatico.gerar_tabela_sintese()
-        analisador_sintatico.gerar_relatorio_erros()
-        print("Esta é uma análise simplificada - para a análise completa, referir-se ao arquivo parser.out")
-
+        analise_sintatica(codigo)
     elif opcao == "3":
-        resultado, ast = analisador_sintatico.parse(codigo)
-        analisador_semantico.analisar(ast)
-
+        analise_semantica(codigo)
     elif opcao == "0":
-        opcao = 0
+        print("\n" + linha())
+        print("Encerrando...".center(LARGURA))
+        print(linha() + "\n")
     else:
-        print("Opção inválida!")
+        print("\n  [ERRO] Opção inválida!")

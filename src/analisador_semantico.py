@@ -347,30 +347,62 @@ class AnalisadorSemantico:
         return self.resultados
     
     def gerar_relatorio(self):
-        print("\n" + "=" * 80)
-        print("ANÁLISE SEMÂNTICA")
-        print("=" * 80 + "\n")
+        LARGURA = 80
+        
+        def linha(char="="):
+            return char * LARGURA
+        
+        def cabecalho(titulo):
+            print("\n" + linha())
+            print(titulo.center(LARGURA))
+            print(linha())
+        
+        def subcabecalho(titulo):
+            print("\n" + linha("-"))
+            print(titulo)
+            print(linha("-"))
+        
+        cabecalho("ANÁLISE SEMÂNTICA")
+        print("Validação de Padrões de Projeto de Ontologia".center(LARGURA))
         
         if not self.resultados:
             self.analisar()
         
         contadores = {'OK': 0, 'ALERTA': 0, 'INFO': 0}
         
+        subcabecalho("VALIDAÇÃO DOS PADRÕES")
+        
         for resultado in self.resultados:
             tipo = resultado['tipo']
             mensagem = resultado['mensagem']
-            
-            prefixo = f"[{tipo}]"
-            print(f"{prefixo} {mensagem}")
             contadores[tipo] += 1
+            
+            if tipo == 'OK':
+                print(f"\n  [OK]     {mensagem}")
+            elif tipo == 'ALERTA':
+                print(f"\n  [ALERTA] {mensagem}")
+            else:
+                print(f"\n  [INFO]   {mensagem}")
         
-        print("\n" + "=" * 80)
-        print("RESULTADO FINAL DA ANÁLISE SEMÂNTICA")
-        print("=" * 80)
-        print(f"\nPadrões completos:   {contadores['OK']}")
-        print(f"Padrões incompletos: {contadores['ALERTA']}")
-        print(f"Padrões ausentes:    {contadores['INFO']}")
-        print("=" * 80)
+        subcabecalho("RESUMO")
+        
+        total = contadores['OK'] + contadores['ALERTA']
+        print(f"\n  {'CATEGORIA':<25} {'QTD':>5}")
+        print("  " + "-" * 32)
+        print(f"  {'Padrões completos':<25} {contadores['OK']:>5}")
+        print(f"  {'Padrões incompletos':<25} {contadores['ALERTA']:>5}")
+        print(f"  {'Padrões ausentes':<25} {contadores['INFO']:>5}")
+        print("  " + "-" * 32)
+        print(f"  {'Total analisado':<25} {total:>5}")
+        
+        print("\n" + linha())
+        if contadores['ALERTA'] == 0 and contadores['OK'] > 0:
+            print("Análise semântica concluída com sucesso.".center(LARGURA))
+        elif contadores['ALERTA'] > 0:
+            print("Análise semântica concluída com alertas.".center(LARGURA))
+        else:
+            print("Análise semântica concluída.".center(LARGURA))
+        print(linha())
 
 
 def analisar(ast):
