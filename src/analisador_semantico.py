@@ -238,9 +238,21 @@ class AnalisadorSemantico:
             nome = relator['name']
             
             mediacoes = []
+            erros_de_tipo = []
+
             for rel in relator['internal_relations']:
                 if len(rel) > 1 and rel[1] == 'mediation':
                     mediacoes.append(rel)
+                    nome_alvo = rel[5] if len(rel) > 5 else (rel[4] if len(rel) > 4 else None)
+
+                    if nome_alvo:
+                        classe_alvo = self.classes_por_nome.get(nome_alvo)
+                        if classe_alvo:
+                            est_alvo = classe_alvo.get('stereotype')
+                            if est_alvo != 'role':
+                                erros_de_tipo.append(f"Mediação '{nome_alvo}' não é um role.")
+                        else:
+                            erros_de_tipo.append(f"Mediação '{nome_alvo}' não encontrada.")
             
             num_mediacoes = len(mediacoes)
             
