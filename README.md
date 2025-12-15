@@ -52,6 +52,7 @@ Compiler/
 ├── src/
 │   ├── analisador_lexico.py     # Analisador léxico (lexer) da linguagem TONTO
 │   ├── analisador_sintatico.py  # Analisador sintático (parser) da linguagem TONTO
+│   ├── analisador_semantico.py  # Analisador semântico (validação de padrões ODP)
 │   ├── main.py                  # Script principal com menu interativo
 │   ├── example.tonto            # Arquivo de exemplo em TONTO
 │   ├── parser.out               # Arquivo de saída do parser (gerado automaticamente)
@@ -83,12 +84,15 @@ python3 main.py
 Ao executar o programa, será apresentado um menu com as seguintes opções:
 
 ```
-============================================================
-Selecione o tipo de análise:
-[1] - Análise léxica
-[2] - Análise sintática
-[0] - sair
-============================================================
+================================================================================
+                                COMPILADOR TONTO                                
+                     Análise Léxica, Sintática e Semântica                      
+================================================================================
+
+  [1] Análise Léxica
+  [2] Análise Sintática
+  [3] Análise Semântica
+  [0] Sair
 ```
 
 #### Opção 1 - Análise Léxica
@@ -101,10 +105,14 @@ Realiza a análise léxica do arquivo `example.tonto` e exibe:
 Realiza a análise sintática do arquivo `example.tonto` e exibe:
 * Tabela de síntese com todas as estruturas identificadas (pacote, classes, tipos de dados, enumerações, relações e conjuntos de generalização)
 * Relatório de erros sintáticos com sugestões de correção
-* Análise detalhada é salva no arquivo `parser.out`
 
 #### Opção 3 - Análise Semântica
-* --A ser implementada--
+Realiza a análise semântica do arquivo `example.tonto` e exibe:
+* Validação dos 6 Padrões de Projeto de Ontologia (ODP)
+* Identificação de padrões completos `[OK]`
+* Identificação de padrões incompletos `[ALERTA]`
+* Identificação de padrões ausentes `[INFO]`
+* Resumo com contagem de cada categoria
 
 
 ## TIPOS DE TOKENS RECONHECIDOS
@@ -301,7 +309,7 @@ disjoint complete genset RoleMixin_Genset_Name {
 
 ## PERSONALIZAR ANÁLISE
 
-Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py` na linha 6:
+Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py`:
 
 ```python
 # Opção 1: Arquivo no mesmo diretório do main.py
@@ -328,6 +336,18 @@ caminho_exemplo = '/caminho/completo/para/seu_arquivo.tonto'
 * Implementa recuperação de erros para continuar análise após encontrar problemas
 * Gera tabela de síntese com estatísticas dos elementos encontrados
 * Produz relatório detalhado de erros com sugestões de correção
+
+### Analisador Semântico
+* Varre a árvore gerada pelo analisador sintático
+* Valida os 6 padrões obrigatórios de projeto de ontologia (ODP):
+  - Subkind Pattern (verifica genset disjoint)
+  - Role Pattern (verifica participação em relação material/mediada)
+  - Phase Pattern (verifica genset disjoint obrigatório)
+  - Relator Pattern (verifica mínimo 2 mediações para roles)
+  - Mode Pattern (verifica characterization e externalDependence)
+  - RoleMixin Pattern (verifica roles especializando e genset)
+* Classifica cada padrão como completo, incompleto ou ausente
+* Gera relatório detalhado com mensagens de OK, ALERTA ou INFO
 
 ### Gramática
 A gramática reconhece a estrutura completa da linguagem TONTO incluindo:
