@@ -330,17 +330,26 @@ class AnalisadorSemantico:
             
             roles_especializando = self._obter_classes_especializando(nome, 'role')
             
-            if len(roles_especializando) < 2:
+            gensets = self._obter_genset_para_classe(nome)
+            roles_via_genset = []
+            for genset in gensets:
+                for specific in genset['specifics']:
+                    classe = self.classes_por_nome.get(specific)
+                    if classe and classe['stereotype'] == 'role':
+                        if classe not in roles_especializando and classe not in roles_via_genset:
+                            roles_via_genset.append(classe)
+            
+            todos_roles = roles_especializando + roles_via_genset
+            
+            if len(todos_roles) < 2:
                 self._adicionar_resultado(
                     'ALERTA', 'RoleMixin',
-                    f"RoleMixin incompleto: '{nome}' não tem pelo menos 2 roles especializando."
+                    f"RoleMixin incompleto: '{nome}' não tem pelo menos 2 roles associados."
                 )
                 continue
             
-            gensets = self._obter_genset_para_classe(nome)
-            
             if gensets:
-                role_names = ', '.join([r['name'] for r in roles_especializando])
+                role_names = ', '.join([r['name'] for r in todos_roles])
                 self._adicionar_resultado(
                     'OK', 'RoleMixin',
                     f"RoleMixin completo: {nome} com roles: {role_names}"

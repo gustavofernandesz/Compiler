@@ -165,15 +165,18 @@ def t_ID(t):
         t.type = 'NEW_DATATYPE'
         return t
     
-    if re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*\d+', lexeme):
-        t.type = 'INSTANCE'
-        return t
-    
-    if re.fullmatch(r'[A-Z][A-Za-z_]*', lexeme) and not re.search(r'\d', lexeme):
+    # CLASS_NAME: começa com maiúscula (pode ter dígitos)
+    if re.fullmatch(r'[A-Z][A-Za-z0-9_]*', lexeme):
         t.type = 'CLASS_NAME'
         return t
     
-    if re.fullmatch(r'[a-z][A-Za-z_]*', lexeme) and not re.search(r'\d', lexeme):
+    # INSTANCE: começa com minúscula e termina com dígito
+    if re.fullmatch(r'[a-z][A-Za-z_0-9]*\d+', lexeme):
+        t.type = 'INSTANCE'
+        return t
+    
+    # RELATION_NAME: começa com minúscula (sem terminar com dígito)
+    if re.fullmatch(r'[a-z][A-Za-z0-9_]*', lexeme):
         t.type = 'RELATION_NAME'
         return t
     

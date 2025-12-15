@@ -301,23 +301,8 @@ def p_genset_declaration(p):
                           | GENSET CLASS_NAME WHERE class_list SPECIALIZES CLASS_NAME
                           | GENSET CLASS_NAME LBRACE GENERAL CLASS_NAME SPECIFICS class_list RBRACE
                           | modifiers GENSET CLASS_NAME LBRACE GENERAL CLASS_NAME SPECIFICS class_list RBRACE'''
-    if len(p) == 8 and p[4] == 'where':
-        p[0] = ('genset', p[3], p[1], p[7], p[5])
-        ast.gensets.append({
-            'name': p[3],
-            'modifiers': p[1],
-            'general': p[7],
-            'specifics': p[5]
-        })
-    elif len(p) == 7 and p[3] == 'where':
-        p[0] = ('genset', p[2], None, p[6], p[4])
-        ast.gensets.append({
-            'name': p[2],
-            'modifiers': None,
-            'general': p[6],
-            'specifics': p[4]
-        })
-    elif len(p) == 9 and p[4] == '{':
+    
+    if len(p) == 10:
         p[0] = ('genset_block', p[3], p[1], p[6], p[8])
         ast.gensets.append({
             'name': p[3],
@@ -325,13 +310,29 @@ def p_genset_declaration(p):
             'general': p[6],
             'specifics': p[8]
         })
-    else:
+    elif len(p) == 9:
         p[0] = ('genset_block', p[2], None, p[5], p[7])
         ast.gensets.append({
             'name': p[2],
             'modifiers': None,
             'general': p[5],
             'specifics': p[7]
+        })
+    elif len(p) == 8:
+        p[0] = ('genset', p[3], p[1], p[7], p[5])
+        ast.gensets.append({
+            'name': p[3],
+            'modifiers': p[1],
+            'general': p[7],
+            'specifics': p[5]
+        })
+    else:
+        p[0] = ('genset', p[2], None, p[6], p[4])
+        ast.gensets.append({
+            'name': p[2],
+            'modifiers': None,
+            'general': p[6],
+            'specifics': p[4]
         })
 
 def p_modifiers(p):
