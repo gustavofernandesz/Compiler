@@ -5,8 +5,8 @@
 Este projeto implementa um compilador para a linguagem TONTO (Textual Ontology Language) com as seguintes funcionalidades:
 
 ## ANÁLISE LÉXICA
-* Identificação de esteriótipos de classe, esteriótipos de relações, palavras reservadas, cardinalidades, símbolos especiais, convenção para nomes de classe, convenção para nomes de relações, convenção para nomes de instâncias, tipos de dados nativos, novos tipos, meta-atributos e suas propriedades.
-* Validação e classificação de tokens de acordo com suas regras, como identificadores, números inteiros, operadores aritméticos, palavras reservadas e delimitadores.
+* Identificação de estereótipos de classe, estereótipos de relações, palavras reservadas, cardinalidades, símbolos especiais, convenção para nomes de classe, convenção para nomes de relações, convenção para nomes de instâncias, tipos de dados nativos, novos tipos, meta-atributos e suas propriedades.
+* Validação e classificação de tokens de acordo com suas regras.
 * Registro de tokens em tabelas formatadas.
 
 ## ANÁLISE SINTÁTICA
@@ -17,9 +17,10 @@ Este projeto implementa um compilador para a linguagem TONTO (Textual Ontology L
 * Geração de tabela de síntese com elementos identificados.
 
 ## ANÁLISE SEMÂNTICA
-* Validação de padrões de projetos de ontologias (Ontology Design Patterns - ODP)
-* Identificação de padrões completos no código
-* Identificação de padrões incompletos através de sobrecarregamento
+* Validação de Padrões de Projeto de Ontologia (Ontology Design Patterns - ODP).
+* Identificação de padrões completos e incompletos no código.
+* Resolução automática de imports entre arquivos.
+* Geração de relatório com classificação: `[OK]`, `[ALERTA]` ou `[INFO]`.
 
 ## FERRAMENTAS UTILIZADAS
 
@@ -50,13 +51,18 @@ pip3 install ply
 ```
 Compiler/
 ├── src/
-│   ├── analisador_lexico.py     # Analisador léxico (lexer) da linguagem TONTO
-│   ├── analisador_sintatico.py  # Analisador sintático (parser) da linguagem TONTO
-│   ├── analisador_semantico.py  # Analisador semântico (validação de padrões ODP)
-│   ├── main.py                  # Script principal com menu interativo
-│   ├── example.tonto            # Arquivo de exemplo em TONTO
-│   ├── parser.out               # Arquivo de saída do parser (gerado automaticamente)
-│   └── parsetab.py              # Tabela de parsing (gerada automaticamente)
+│   ├── analisador_lexico.py     # Analisador léxico (lexer)
+│   ├── analisador_sintatico.py  # Analisador sintático (parser)
+│   ├── analisador_semantico.py  # Analisador semântico (validação ODP)
+│   ├── main.py                  # Script principal com menus
+│   └── example.tonto            # Arquivo de exemplo
+├── Compiladores_UFERSA-main/    # Pasta de testes
+│   ├── CarExample/              # Exemplo de aluguel de carros
+│   ├── FoodAllergyExample/      # Exemplo de alergia alimentar
+│   ├── Hospital_Model/          # Modelo de hospital/UBS
+│   ├── Ontology Design Patterns em Tonto/  # 6 padrões ODP
+│   ├── Pizzaria_Model/          # Modelo de pizzaria
+│   └── TDAHExample/             # Exemplo TDAH
 ├── data/
 │   └── data.txt
 └── README.md
@@ -64,24 +70,11 @@ Compiler/
 
 ## COMO EXECUTAR
 
-### Executar o compilador
-
-O script pode ser executado de qualquer diretório:
-
-**Opção 1: A partir do diretório raiz do projeto**
 ```bash
 python3 src/main.py
 ```
 
-**Opção 2: A partir do diretório src**
-```bash
-cd src
-python3 main.py
-```
-
-### Menu Interativo
-
-Ao executar o programa, será apresentado um menu com as seguintes opções:
+### Menu Principal
 
 ```
 ================================================================================
@@ -89,238 +82,92 @@ Ao executar o programa, será apresentado um menu com as seguintes opções:
                      Análise Léxica, Sintática e Semântica                      
 ================================================================================
 
-  [1] Análise Léxica
-  [2] Análise Sintática
-  [3] Análise Semântica
+  [1] Selecionar Arquivo de Teste
   [0] Sair
 ```
 
-#### Opção 1 - Análise Léxica
-Realiza a análise léxica do arquivo `example.tonto` e exibe:
-* Tabela formatada com os tokens identificados (linha, tipo, valor)
+### Menu de Seleção de Projeto
+
+Ao escolher a opção 1, será exibida a lista de projetos de teste disponíveis:
+
+```
+================================================================================
+                          SELEÇÃO DE PROJETO DE TESTE                           
+================================================================================
+  [1] CarExample (2 arquivo(s))
+  [2] FoodAllergyExample (1 arquivo(s))
+  [3] Hospital_Model (7 arquivo(s))
+  [4] Ontology Design Patterns em Tonto (6 arquivo(s))
+  [5] Pizzaria_Model (8 arquivo(s))
+  [6] TDAHExample (1 arquivo(s))
+
+  [7] Arquivo local (example.tonto)
+  [0] Voltar
+```
+
+Após selecionar o projeto, escolha o arquivo `.tonto` específico.
+
+### Menu de Análise
+
+```
+--------------------------------------------------------------------------------
+ARQUIVO: src/Cliente.tonto
+--------------------------------------------------------------------------------
+
+  [1] Análise Léxica
+  [2] Análise Sintática
+  [3] Análise Semântica 
+
+  [4] Trocar arquivo
+  [0] Sair
+```
+
+## TIPOS DE ANÁLISE
+
+### Análise Léxica
+* Tabela de tokens identificados (linha, tipo, valor)
 * Total de tokens encontrados
-* Contagem de tokens por tipo
+* Contagem por tipo de token
 
-#### Opção 2 - Análise Sintática
-Realiza a análise sintática do arquivo `example.tonto` e exibe:
-* Tabela de síntese com todas as estruturas identificadas (pacote, classes, tipos de dados, enumerações, relações e conjuntos de generalização)
-* Relatório de erros sintáticos com sugestões de correção
+### Análise Sintática
+* Tabela de síntese com estruturas identificadas
+* Relatório de erros com sugestões de correção
 
-#### Opção 3 - Análise Semântica
-Realiza a análise semântica do arquivo `example.tonto` e exibe:
-* Validação dos 6 Padrões de Projeto de Ontologia (ODP)
-* Identificação de padrões completos `[OK]`
-* Identificação de padrões incompletos `[ALERTA]`
-* Identificação de padrões ausentes `[INFO]`
-* Resumo com contagem de cada categoria
+### Análise Semântica
+* Resolução automática de imports (carrega arquivos dependentes)
+* Validação dos 6 Padrões de Projeto de Ontologia
+* Relatório com padrões completos, incompletos e ausentes
 
+## PADRÕES DE PROJETO DE ONTOLOGIA (ODP)
 
-## TIPOS DE TOKENS RECONHECIDOS
+O analisador semântico valida os seguintes 6 padrões:
 
-### Estereótipos
-- **EST_CLASS**: Estereótipos de classe (kind, phase, role, etc.)
-- **EST_REL**: Estereótipos de relação (mediation, componentOf, etc.)
+| Padrão | Descrição |
+|--------|-----------|
+| **Subkind** | Verifica se subkinds especializam um kind e possuem genset com modificador disjoint |
+| **Role** | Verifica se roles especializam um kind e participam de relação material ou mediação |
+| **Phase** | Verifica se phases especializam um kind e possuem genset disjoint obrigatório |
+| **Relator** | Verifica se o relator possui pelo menos 2 mediações apontando para roles |
+| **Mode** | Verifica se o mode possui relações de characterization e externalDependence |
+| **RoleMixin** | Verifica se o roleMixin possui pelo menos 2 roles associados e genset definido |
 
-### Identificadores
-- **CLASS_NAME**: Nomes de classes (começam com maiúscula)
-- **RELATION_NAME**: Nomes de relações/propriedades (começam com minúscula)
-- **INSTANCE**: Instâncias (terminam com dígitos)
-- **NEW_DATATYPE**: Novos tipos de dados (terminam com DataType)
+### Classificação dos Resultados
 
-### Tipos Nativos
-- **NATIVE_STRING**: Tipo string
-- **NATIVE_NUMBER**: Tipo number
-- **NATIVE_BOOLEAN**: Tipo boolean
-- **NATIVE_DATE**: Tipo date
-- **NATIVE_TIME**: Tipo time
-- **NATIVE_DATETIME**: Tipo datetime
+* `[OK]` - Padrão implementado corretamente (completo)
+* `[ALERTA]` - Padrão com implementação incompleta
+* `[INFO]` - Padrão não encontrado no código
 
-### Meta-atributos
-- **META_CONST**: const
-- **META_ORDERED**: ordered
-- **META_DERIVED**: derived
-- **META_SUBSETS**: subsets
-- **META_REDEFINES**: redefines
+## RESOLUÇÃO DE IMPORTS
 
-### Palavras Reservadas
-- PACKAGE, ENUM, RELATION, DATATYPE, GENSET, SPECIALIZES, etc.
+Na análise semântica, o compilador resolve automaticamente as instruções `import`:
 
-### Símbolos
-- LBRACE `{`, RBRACE `}`
-- LBRACKET `[`, RBRACKET `]`
-- LPAREN `(`, RPAREN `)`
-- COMMA `,`, COLON `:`
-- DOT `.`, HYPHEN `-`
-- CONTEM `<>--`, CONTIDO `--<>`
-- ARROBA `@`, ASTERISCO `*`
+1. Lê o arquivo principal
+2. Identifica declarações de import
+3. Carrega recursivamente os arquivos importados
+4. Mescla as definições (classes, relações, gensets, etc.) na AST principal
+5. Executa a análise semântica na AST unificada
 
-## ESTRUTURAS SINTÁTICAS RECONHECIDAS
-
-### Declaração de Pacote
-```
-package NomeDoPacote
-```
-
-### Declaração de Classes
-```
-estereotipo NomeDaClasse {
-    atributo: tipo [cardinalidade] {metadados}
-    @estereotipo [card] simbolo [card] ClasseRelacionada
-}
-
-estereotipo NomeDaClasse specializes ClassePai
-```
-
-### Declaração de Tipos de Dados
-```
-datatype NomeDoTipo {
-    atributo: tipo [cardinalidade]
-}
-```
-
-### Declaração de Enumerações
-```
-enum NomeEnum {
-    Valor1, Valor2, Valor3
-}
-```
-
-### Declaração de Relações
-```
-@estereotipo relation ClasseOrigem [card] simbolo [card] ClasseDestino
-
-relation ClasseOrigem [card] simbolo nomeRelacao simbolo [card] ClasseDestino
-```
-
-### Conjuntos de Generalização
-```
-genset NomeGenSet {
-    general ClasseGeral
-    specifics ClasseEspecifica1, ClasseEspecifica2
-}
-
-disjoint complete genset NomeGenSet where ClasseEsp1, ClasseEsp2 specializes ClasseGeral
-```
-
-### Cardinalidades
-- `[N]` - Cardinalidade exata
-- `[N..M]` - Cardinalidade com intervalo
-- `[N..*]` - Cardinalidade com limite superior indefinido
-- `[*]` - Cardinalidade indefinida
-
-## ESTRUTURAS SEMÂNTICAS RECONHECIDAS
-
-### Subkind Pattern
-```
-package Subkind_Pattern
-
-kind ClassName
-subkind SubclassName1 specializes ClassName
-subkind SubclassName2 specializes ClassName
-
-disjoint complete genset Kind_Subkind_Genset_Name {
-    general ClassName
-    specifics SubclassName1, SubclassName2
-}
-// "complete" is optional, but "disjoint" applies to subkinds
-```
-
-### Role Pattern
-```
-package Role_Pattern
-
-kind ClassName
-role Role_Name1 specializes ClassName
-role Role_Name2 specializes ClassName
-
-complete genset Class_Role_Genset_Name {
-    general ClassName
-    specifics Role_Name1, Role_Name2
-}
-// "complete" is optional, but "disjoint" doesn't apply to roles
-```
-
-### Phase Pattern
-```
-package Phase_Pattern
-
-kind ClassName
-
-phase Phase_Name1 specializes ClassName
-phase Phase_Name2 specializes ClassName
-phase Phase_NameN specializes ClassName
-
-disjoint complete genset Class_Phase_Genset_Name {
-    general ClassName
-    specifics Phase_Name1, Phase_Name2, Phase_NameN
-}
-// "disjoint" is mandatory for phases, but "complete" is optional
-```
-
-### Relator Pattern
-```
-package Relator_Pattern
-
-kind ClassName1
-kind ClassName2
-
-role Role_Name1 specializes ClassName1
-role Role_Name2 specializes ClassName2
-
-relator Relator_Name{
-    @mediation [1..*] -- [1..*] Role_Name1
-    @mediation [1..*] -- [1..*] Role_Name2
-}
-
-@material relation Role_Name1 [1..*] -- relationName -- [1..*] Role_Name2
-// "relationName" can be replaced by a specific name for the relation
-```
-
-### Mode Pattern
-```
-package Mode_Pattern
-
-kind ClassName1
-kind ClassName2
-
-mode Mode_Name1 {
-    @characterization [1..*] -- [1] ClassName1
-    @externalDependence [1..*] -- [1] ClassName2
-}
-```
-
-### RoleMixin Pattern
-```
-package RoleMixin_Pattern
-
-kind ClassName1
-kind ClassName2
-
-roleMixin RoleMixin_Name
-
-role Role_Name1 specializes ClassName1, RoleMixin_Name
-role Role_Name2 specializes ClassName2, RoleMixin_Name
-
-disjoint complete genset RoleMixin_Genset_Name {
-    general RoleMixin_Name
-    specifics Role_Name1, Role_Name2
-}
-```
-
-## PERSONALIZAR ANÁLISE
-
-Para analisar seu próprio arquivo `.tonto`, modifique o arquivo `main.py`:
-
-```python
-# Opção 1: Arquivo no mesmo diretório do main.py
-caminho_exemplo = os.path.join(diretorio_atual, 'seu_arquivo.tonto')
-
-# Opção 2: Arquivo em outro local (caminho relativo ao main.py)
-caminho_exemplo = os.path.join(diretorio_atual, '..', 'data', 'seu_arquivo.tonto')
-
-# Opção 3: Arquivo com caminho absoluto
-caminho_exemplo = '/caminho/completo/para/seu_arquivo.tonto'
-```
+Isso permite analisar projetos com múltiplos arquivos interdependentes.
 
 ## DETALHES DA IMPLEMENTAÇÃO
 
@@ -333,29 +180,22 @@ caminho_exemplo = '/caminho/completo/para/seu_arquivo.tonto'
 ### Analisador Sintático
 * Implementado usando PLY com gramática LALR
 * Constrói árvore sintática abstrata (AST) durante o parsing
-* Implementa recuperação de erros para continuar análise após encontrar problemas
-* Gera tabela de síntese com estatísticas dos elementos encontrados
-* Produz relatório detalhado de erros com sugestões de correção
+* Implementa recuperação de erros para continuar análise
+* Gera tabela de síntese e relatório de erros
 
 ### Analisador Semântico
-* Varre a árvore gerada pelo analisador sintático
-* Valida os 6 padrões obrigatórios de projeto de ontologia (ODP):
-  - Subkind Pattern (verifica genset disjoint)
-  - Role Pattern (verifica participação em relação material/mediada)
-  - Phase Pattern (verifica genset disjoint obrigatório)
-  - Relator Pattern (verifica mínimo 2 mediações para roles)
-  - Mode Pattern (verifica characterization e externalDependence)
-  - RoleMixin Pattern (verifica roles especializando e genset)
-* Classifica cada padrão como completo, incompleto ou ausente
-* Gera relatório detalhado com mensagens de OK, ALERTA ou INFO
+* Varre a AST gerada pelo analisador sintático
+* Constrói índices para busca eficiente de classes, gensets e relações
+* Valida os 6 padrões ODP com regras específicas para cada um
+* Gera relatório detalhado com contagem de resultados
 
-### Gramática
-A gramática reconhece a estrutura completa da linguagem TONTO incluindo:
-* Declarações de pacotes
-* Classes com estereótipos OntoUML
-* Relações internas e externas com cardinalidades
-* Tipos de dados customizados
-* Enumerações
-* Conjuntos de generalização (disjoint, complete)
-* Meta-atributos (const, ordered, derived, subsets, redefines)
-* Padrões de Projeto de Ontologia (Ontology Design Patterns - ODP)
+## PROJETOS DE TESTE INCLUÍDOS
+
+| Projeto | Descrição | Arquivos |
+|---------|-----------|----------|
+| CarExample | Modelo de aluguel de carros | 2 |
+| FoodAllergyExample | Modelo de alergia alimentar | 1 |
+| Hospital_Model | Modelo de UBS com pacientes, funcionários e vacinação | 7 |
+| Ontology Design Patterns | Exemplos dos 6 padrões ODP | 6 |
+| Pizzaria_Model | Modelo completo de pizzaria | 8 |
+| TDAHExample | Modelo de TDAH | 1 |
